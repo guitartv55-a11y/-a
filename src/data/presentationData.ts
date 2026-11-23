@@ -485,6 +485,67 @@ export function getIndustryPhotosForCenter(
   }));
 }
 
+export interface RegionalBenchmark {
+  country: string;
+  manufacturingShareGdp: string;
+  highlight: string;
+}
+
+export interface RegionalAnalysis {
+  regionTitle: string;
+  comparisonTitle: string;
+  commonalities: string[];
+  differences: string[];
+  benchmarks: RegionalBenchmark[];
+  sourceNote: string;
+}
+
+/**
+ * Authoritative World Bank (WDI – Manufacturing value added % of GDP, GVC/FDI reports)
+ * and IMF (ASEAN Regional Economic Outlook / Supply Chain studies) synthesis comparing
+ * Mainland vs. Maritime Southeast Asian industrialization.
+ */
+export const REGIONAL_INDUSTRIAL_ANALYSIS: Record<SeaRegion, RegionalAnalysis> = {
+  mainland: {
+    regionTitle: 'Điểm chung công nghiệp ĐNA lục địa',
+    comparisonTitle: 'Khác biệt so với ĐNA hải đảo',
+    commonalities: [
+      'Công nghiệp hóa định hướng xuất khẩu mạnh, hưởng lợi lớn từ làn sóng FDI và xu hướng dịch chuyển chuỗi cung ứng Đông Á ("Trung Quốc + 1").',
+      'Công nghiệp nhẹ và chế biến nền tảng (dệt may, thực phẩm, chế biến lâm sản) hiện diện rộng khắp, tạo động lực tăng trưởng việc làm công nghiệp.',
+      'Các trung tâm lớn (Việt Nam, Thái Lan) đẩy mạnh lắp ráp điện tử, cơ khí và ô tô gắn với chuỗi giá trị toàn cầu.',
+    ],
+    differences: [
+      'Thiên về sản xuất – lắp ráp đại trà trên các hành lang công nghiệp lục địa (điện tử Việt Nam, ô tô Thái Lan, dệt may Campuchia) hơn là tổ hợp lọc hóa dầu và công nghiệp hàng hải biển sâu.',
+      'Phân hóa trình độ nội vùng rõ rệt hơn: Việt Nam và Thái Lan hội nhập sâu vào chuỗi sản xuất toàn cầu, trong khi Lào và Myanmar vẫn chủ yếu dừng ở chế biến thô (lâm sản, thực phẩm).',
+    ],
+    benchmarks: [
+      { country: 'Thái Lan', manufacturingShareGdp: '~25–27% GDP', highlight: 'Đầu tàu ô tô & chế biến thực phẩm' },
+      { country: 'Việt Nam', manufacturingShareGdp: '~24–25% GDP', highlight: 'Trung tâm lắp ráp điện tử & dệt may FDI' },
+      { country: 'Campuchia', manufacturingShareGdp: '~25–29% GDP', highlight: 'Chuyên môn hóa cao về dệt may xuất khẩu' },
+    ],
+    sourceNote: 'Nguồn: World Bank (WDI – Manufacturing, value added % of GDP) & IMF (ASEAN GVC & FDI Outlook).',
+  },
+  maritime: {
+    regionTitle: 'Điểm chung công nghiệp ĐNA hải đảo',
+    comparisonTitle: 'Khác biệt so với ĐNA lục địa',
+    commonalities: [
+      'Phát triển gắn chặt với kinh tế biển, hệ thống cảng nước sâu và tuyến hàng hải quốc tế Malacca – Biển Đông, thuận lợi xuất nhập khẩu nguyên liệu và thiết bị.',
+      'Hình thành sớm các ngành công nghệ cao, năng lượng và công nghiệp nặng: điện tử – bán dẫn, lọc hóa dầu, đóng tàu, khai khoáng chế biến sâu và sản xuất ô tô.',
+      'Đóng góp của công nghiệp chế biến chế tạo duy trì ổn định và giàu giá trị gia tăng (Malaysia ~22–24% GDP, Singapore ~18–21% GDP, Indonesia & Philippines ~17–19% GDP).',
+    ],
+    differences: [
+      'Dẫn đầu khu vực ở công đoạn thượng nguồn và hàm lượng công nghệ cao: Singapore nổi bật về lọc hóa dầu, kỹ thuật chính xác và đóng tàu; Malaysia là mắt xích lớn về đóng gói – kiểm thử bán dẫn (OSAT).',
+      'Indonesia sở hữu quy mô thị trường nội địa lớn nhất ASEAN, kết hợp chế biến sâu khoáng sản (luyện kim, chuỗi pin xe điện) với sản xuất ô tô; song vẫn có khoảng cách lớn với Đông Timor.',
+    ],
+    benchmarks: [
+      { country: 'Malaysia', manufacturingShareGdp: '~22–24% GDP', highlight: 'Mắt xích bán dẫn (OSAT), điện tử & hóa chất' },
+      { country: 'Singapore', manufacturingShareGdp: '~18–21% GDP', highlight: 'Lọc hóa dầu, bán dẫn & đóng tàu giá trị cao' },
+      { country: 'Indonesia', manufacturingShareGdp: '~18–19% GDP', highlight: 'Chế biến khoáng sản sâu, ô tô & thị trường nội địa' },
+    ],
+    sourceNote: 'Nguồn: World Bank (WDI – Manufacturing, value added % of GDP) & IMF (ASEAN Regional Economic Outlook).',
+  },
+};
+
 export interface CountrySectorSlice {
   name: string;
   sharePercent: number;

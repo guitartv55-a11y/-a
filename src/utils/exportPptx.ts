@@ -6,6 +6,7 @@ import {
   MAINLAND_COUNTRIES,
   MARITIME_COUNTRIES,
   OVERVIEW_BULLETS,
+  REGIONAL_INDUSTRIAL_ANALYSIS,
   SUMMARY_POINTS,
   type ImageKey,
 } from '../data/presentationData';
@@ -469,7 +470,7 @@ export async function exportPresentationToPptx(): Promise<void> {
     const centers = group.centerIds
       .map((id) => getCenterById(id))
       .filter((c): c is NonNullable<typeof c> => Boolean(c));
-    const cardH = centers.length > 1 ? 1.56 : 0.94;
+    const cardH = centers.length > 1 ? 1.44 : 0.88;
     const targetSlide = countrySlideMap.get(group.countryIso);
     const linkOpts = targetSlide
       ? { hyperlink: { slide: targetSlide, tooltip: `Xem chi tiết ${group.country}` } }
@@ -488,11 +489,11 @@ export async function exportPresentationToPptx(): Promise<void> {
 
     s3.addText(`${group.order}. ${group.country}  ›`, {
       x: 6.12,
-      y: s3Y + 0.08,
+      y: s3Y + 0.06,
       w: 4.3,
-      h: 0.28,
+      h: 0.26,
       fontFace: FONT,
-      fontSize: 12,
+      fontSize: 11.5,
       bold: true,
       color: COLORS.navy,
       ...linkOpts,
@@ -506,18 +507,18 @@ export async function exportPresentationToPptx(): Promise<void> {
         ],
         {
           x: 6.12,
-          y: s3Y + 0.38 + ci * 0.54,
+          y: s3Y + 0.34 + ci * 0.5,
           w: 4.35,
-          h: 0.52,
+          h: 0.48,
           fontFace: FONT,
-          fontSize: 9.5,
+          fontSize: 9.2,
           valign: 'top',
           ...linkOpts,
         }
       );
     });
 
-    s3Y += cardH + 0.1;
+    s3Y += cardH + 0.08;
   });
 
   // Far right: 4 Mainland industry thumbnails
@@ -529,29 +530,51 @@ export async function exportPresentationToPptx(): Promise<void> {
   ];
   s3Photos.forEach((item, idx) => {
     const data = images[item.key];
-    const yPos = 1.26 + idx * 1.44;
+    const yPos = 1.26 + idx * 1.33;
     if (data) {
       s3.addImage({
         data,
         x: 10.8,
         y: yPos,
         w: 1.95,
-        h: 1.14,
-        sizing: { type: 'cover', w: 1.95, h: 1.14 },
+        h: 1.04,
+        sizing: { type: 'cover', w: 1.95, h: 1.04 },
         rounding: true,
       });
     }
     s3.addText(item.label, {
       x: 10.8,
-      y: yPos + 1.15,
+      y: yPos + 1.06,
       w: 1.95,
       h: 0.22,
       fontFace: FONT,
-      fontSize: 8.5,
+      fontSize: 8.4,
       bold: true,
       color: COLORS.navy,
       align: 'center',
     });
+  });
+
+  // Clickable World Bank & IMF comparative analysis CTA linking to Slide 17
+  s3.addText('Phân tích World Bank & IMF: Điểm chung & Khác biệt ĐNA lục địa  ›', {
+    shape: 'roundRect',
+    x: 5.95,
+    y: 6.68,
+    w: 6.8,
+    h: 0.48,
+    rectRadius: 0.12,
+    fill: { color: COLORS.navy },
+    line: { color: COLORS.teal, width: 1 },
+    fontFace: FONT,
+    fontSize: 10.2,
+    bold: true,
+    color: COLORS.white,
+    align: 'center',
+    valign: 'middle',
+    hyperlink: {
+      slide: 17,
+      tooltip: 'Nhấp để xem phân tích điểm chung & khác biệt theo World Bank và IMF',
+    },
   });
 
   // =========================================================================
@@ -620,7 +643,7 @@ export async function exportPresentationToPptx(): Promise<void> {
   MARITIME_COUNTRIES.forEach((group, idx) => {
     const center = getCenterById(group.centerIds[0]);
     if (!center) return;
-    const yPos = 1.26 + idx * 1.14;
+    const yPos = 1.26 + idx * 1.06;
     const isFeatured = Boolean(group.featured);
     const targetSlide = countrySlideMap.get(group.countryIso);
     const linkOpts = targetSlide
@@ -631,7 +654,7 @@ export async function exportPresentationToPptx(): Promise<void> {
       x: 7.3,
       y: yPos,
       w: 5.45,
-      h: 1.02,
+      h: 0.96,
       fill: { color: isFeatured ? COLORS.white : 'F1F5F9' },
       line: { color: isFeatured ? COLORS.teal : COLORS.border, width: isFeatured ? 1.2 : 1 },
       rectRadius: 0.08,
@@ -640,11 +663,11 @@ export async function exportPresentationToPptx(): Promise<void> {
 
     s4.addText(`${group.order}. ${group.country}  ›`, {
       x: 7.5,
-      y: yPos + 0.1,
+      y: yPos + 0.08,
       w: 5.0,
-      h: 0.28,
+      h: 0.26,
       fontFace: FONT,
-      fontSize: 12,
+      fontSize: 11.5,
       bold: true,
       color: isFeatured ? COLORS.navy : COLORS.slateText,
       ...linkOpts,
@@ -657,14 +680,36 @@ export async function exportPresentationToPptx(): Promise<void> {
       ],
       {
         x: 7.5,
-        y: yPos + 0.42,
+        y: yPos + 0.37,
         w: 5.05,
-        h: 0.52,
+        h: 0.5,
         fontFace: FONT,
-        fontSize: 10,
+        fontSize: 9.6,
         ...linkOpts,
       }
     );
+  });
+
+  // Clickable World Bank & IMF comparative analysis CTA linking to Slide 18
+  s4.addText('Phân tích World Bank & IMF: Điểm chung & Khác biệt ĐNA hải đảo  ›', {
+    shape: 'roundRect',
+    x: 7.3,
+    y: 6.64,
+    w: 5.45,
+    h: 0.5,
+    rectRadius: 0.12,
+    fill: { color: COLORS.navy },
+    line: { color: COLORS.teal, width: 1 },
+    fontFace: FONT,
+    fontSize: 10,
+    bold: true,
+    color: COLORS.white,
+    align: 'center',
+    valign: 'middle',
+    hyperlink: {
+      slide: 18,
+      tooltip: 'Nhấp để xem phân tích điểm chung & khác biệt theo World Bank và IMF',
+    },
   });
 
   // =========================================================================
@@ -1072,6 +1117,233 @@ export async function exportPresentationToPptx(): Promise<void> {
         hyperlink: {
           slide: btn.slide,
           tooltip: `Quay lại ${btn.label.replace('↩ ', '')}`,
+        },
+      });
+    });
+  });
+
+  // =========================================================================
+  // SLIDES 17 & 18 – PHÂN TÍCH SO SÁNH WORLD BANK & IMF (ĐNA LỤC ĐỊA & HẢI ĐẢO)
+  // =========================================================================
+  const regionalAnalysisSpecs: Array<{
+    region: 'mainland' | 'maritime';
+    badge: string;
+    kicker: string;
+    title: string;
+    homeSlide: number;
+    otherSlide: number;
+    homeLabel: string;
+    otherLabel: string;
+  }> = [
+    {
+      region: 'mainland',
+      badge: 'PHÂN TÍCH · WB & IMF',
+      kicker: 'ĐÔNG NAM Á LỤC ĐỊA  ·  TỔNG HỢP WORLD BANK (WDI) & IMF',
+      title: 'ĐIỂM CHUNG & KHÁC BIỆT CÔNG NGHIỆP ĐNA LỤC ĐỊA',
+      homeSlide: 3,
+      otherSlide: 18,
+      homeLabel: '↩ Slide 3: ĐNA lục địa',
+      otherLabel: '⇄ Phân tích ĐNA hải đảo',
+    },
+    {
+      region: 'maritime',
+      badge: 'PHÂN TÍCH · WB & IMF',
+      kicker: 'ĐÔNG NAM Á HẢI ĐẢO  ·  TỔNG HỢP WORLD BANK (WDI) & IMF',
+      title: 'ĐIỂM CHUNG & KHÁC BIỆT CÔNG NGHIỆP ĐNA HẢI ĐẢO',
+      homeSlide: 4,
+      otherSlide: 17,
+      homeLabel: '↩ Slide 4: ĐNA hải đảo',
+      otherLabel: '⇄ Phân tích ĐNA lục địa',
+    },
+  ];
+
+  regionalAnalysisSpecs.forEach((spec) => {
+    const analysis = REGIONAL_INDUSTRIAL_ANALYSIS[spec.region];
+    const aSlide = pptx.addSlide();
+
+    addSlideHeader(aSlide, spec.badge, spec.kicker, spec.title);
+
+    // Left Card: Commonalities
+    aSlide.addShape('roundRect', {
+      x: 0.6,
+      y: 1.26,
+      w: 5.92,
+      h: 3.55,
+      fill: { color: COLORS.white },
+      line: { color: COLORS.teal, width: 1.2 },
+      rectRadius: 0.08,
+    });
+
+    aSlide.addText(analysis.regionTitle.toUpperCase(), {
+      x: 0.82,
+      y: 1.4,
+      w: 5.48,
+      h: 0.34,
+      fontFace: FONT,
+      fontSize: 12,
+      bold: true,
+      color: COLORS.teal,
+    });
+
+    analysis.commonalities.forEach((item, idx) => {
+      aSlide.addText(
+        [
+          { text: `0${idx + 1}. `, options: { bold: true, color: COLORS.teal } },
+          { text: item, options: { color: COLORS.slateText } },
+        ],
+        {
+          x: 0.82,
+          y: 1.82 + idx * 0.96,
+          w: 5.48,
+          h: 0.9,
+          fontFace: FONT,
+          fontSize: 10.5,
+          valign: 'top',
+        }
+      );
+    });
+
+    // Right Card: Differences vs. the other subregion
+    aSlide.addShape('roundRect', {
+      x: 6.8,
+      y: 1.26,
+      w: 5.93,
+      h: 3.55,
+      fill: { color: COLORS.white },
+      line: { color: COLORS.amber, width: 1.2 },
+      rectRadius: 0.08,
+    });
+
+    aSlide.addText(analysis.comparisonTitle.toUpperCase(), {
+      x: 7.02,
+      y: 1.4,
+      w: 5.48,
+      h: 0.34,
+      fontFace: FONT,
+      fontSize: 12,
+      bold: true,
+      color: COLORS.amber,
+    });
+
+    analysis.differences.forEach((item, idx) => {
+      aSlide.addText(
+        [
+          { text: '▸ ', options: { bold: true, color: COLORS.amber } },
+          { text: item, options: { color: COLORS.slateText } },
+        ],
+        {
+          x: 7.02,
+          y: 1.88 + idx * 1.38,
+          w: 5.48,
+          h: 1.28,
+          fontFace: FONT,
+          fontSize: 10.8,
+          valign: 'top',
+        }
+      );
+    });
+
+    // Middle-Bottom Strip: 3 World Bank WDI Manufacturing (% GDP) benchmark cards
+    aSlide.addText('CHỈ SỐ CHẾ BIẾN CHẾ TẠO (% GDP) – WORLD BANK WDI', {
+      x: 0.6,
+      y: 4.94,
+      w: 6.8,
+      h: 0.28,
+      fontFace: FONT,
+      fontSize: 9.5,
+      bold: true,
+      color: COLORS.navy,
+    });
+
+    analysis.benchmarks.forEach((b, idx) => {
+      const bx = 0.6 + idx * 4.11;
+      aSlide.addShape('roundRect', {
+        x: bx,
+        y: 5.26,
+        w: 3.91,
+        h: 0.92,
+        fill: { color: COLORS.tealLight },
+        line: { color: COLORS.border, width: 1 },
+        rectRadius: 0.08,
+      });
+
+      aSlide.addText(b.country, {
+        x: bx + 0.16,
+        y: 5.33,
+        w: 1.85,
+        h: 0.28,
+        fontFace: FONT,
+        fontSize: 11,
+        bold: true,
+        color: COLORS.navy,
+      });
+
+      aSlide.addText(b.manufacturingShareGdp, {
+        x: bx + 2.0,
+        y: 5.33,
+        w: 1.75,
+        h: 0.28,
+        fontFace: FONT,
+        fontSize: 11,
+        bold: true,
+        color: COLORS.teal,
+        align: 'right',
+      });
+
+      aSlide.addText(b.highlight, {
+        x: bx + 0.16,
+        y: 5.65,
+        w: 3.58,
+        h: 0.44,
+        fontFace: FONT,
+        fontSize: 9.2,
+        color: COLORS.slateText,
+        valign: 'top',
+      });
+    });
+
+    aSlide.addText(analysis.sourceNote, {
+      x: 0.6,
+      y: 6.23,
+      w: 12.13,
+      h: 0.24,
+      fontFace: FONT,
+      fontSize: 8.6,
+      italic: true,
+      color: COLORS.slateMuted,
+    });
+
+    // Bottom Interactive Return Bar
+    const aNavButtons: Array<{ label: string; slide: number; primary?: boolean }> = [
+      { label: spec.homeLabel, slide: spec.homeSlide, primary: true },
+      { label: spec.otherLabel, slide: spec.otherSlide },
+      { label: '↩ Slide 5: Biểu đồ tròn', slide: 5 },
+      { label: '↩ Slide 6: Tổng kết', slide: 6 },
+    ];
+
+    aNavButtons.forEach((btn, bi) => {
+      const bx = 0.6 + bi * 3.08;
+      aSlide.addText(btn.label, {
+        shape: 'roundRect',
+        x: bx,
+        y: 6.56,
+        w: 2.9,
+        h: 0.54,
+        rectRadius: 0.14,
+        fill: { color: btn.primary ? COLORS.navy : COLORS.white },
+        line: {
+          color: btn.primary ? COLORS.navy : COLORS.teal,
+          width: 1.1,
+        },
+        fontFace: FONT,
+        fontSize: 10.5,
+        bold: true,
+        color: btn.primary ? COLORS.white : COLORS.navy,
+        align: 'center',
+        valign: 'middle',
+        hyperlink: {
+          slide: btn.slide,
+          tooltip: `Chuyển tới ${btn.label.replace(/^[↩⇄]\s*/, '')}`,
         },
       });
     });

@@ -17,8 +17,19 @@ import {
   getIndustryPhotosForCenter,
   getCountryPieData,
   getPerCountrySectorCharts,
+  REGIONAL_INDUSTRIAL_ANALYSIS,
 } from './presentationData';
 import { computePptxMapHotspots } from '../utils/seaMapGeometry';
+
+test('World Bank & IMF regional analysis covers Mainland and Maritime SEA with commonalities and differences', () => {
+  for (const region of ['mainland', 'maritime'] as const) {
+    const info = REGIONAL_INDUSTRIAL_ANALYSIS[region];
+    assert.ok(info.commonalities.length >= 3, `${region} has commonalities`);
+    assert.ok(info.differences.length >= 2, `${region} has differences`);
+    assert.ok(info.benchmarks.length >= 3, `${region} has WDI benchmarks`);
+    assert.ok(info.sourceNote.includes('World Bank') && info.sourceNote.includes('IMF'));
+  }
+});
 
 test('PPTX map hotspots cover all visible centers strictly within map frame bounds', () => {
   const modes = [
